@@ -1,19 +1,32 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>Deborah Lab #3</title>
-    </head>
-    <body>
-        <h1>Deborah Lab #3</h1>
-        
-        <p>Enter a temperature in Fahrenheit:</p>
-        <input id="inputF" type="text">
+<head>
+    <meta charset="utf-8">
+    <title>Lab #3: Interactive Temperature Converter</title>
+</head>
+<body>
+    <h1>Lab #3: Interactive Temperature Converter</h1>
 
-        <button id="submit">Convert temperature</button>
+    <p>Convert a temperature from Fahrenheit to either Celsius or Kelvin.</p>
 
-        <div id="output"></div>
+    <p>
+        <label for="inputF">Enter Temperature in Fahrenheit:</label>
+        <input type="number" id="inputF" value="32" /> 
+    </p>
 
-    </body>
+    <p>
+        Choose a conversion:
+        <select id="conversionChoice">
+            <option value="c">Celsius</option>
+            <option value="k">Kelvin</option>
+        </select>
+    </p>
+
+    <button id="submit">Convert Temperature</button>
+    
+    <div id="output"></div>
 
     <script src="output.js"></script>
-    <script src="temp-converter.js"></script>
+    <script src="main.js"></script>
+</body>
 </html>

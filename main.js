@@ -1,122 +1,73 @@
-"use strict";
+"use strict" // Step 4a
 
-// =========================================================================
-// Configuration Variables
-// =========================================================================
-let drawingWidth = 500;
-let drawingHeight = 500;
+// A function to handle the entire conversion process when the button is clicked
+function convertTemperature() {
+    // Step 4b: Get Fahrenheit input value. The unary plus (+) ensures it is treated as a number.
+    let fahrenheit = +document.getElementById("inputF").value;
 
-// These two variables control the snowman's position.
-// Changing these values will move the entire drawing.
-let snowmanX = 250;
-let snowmanY = 350;
+    // Step 18: Get the user's conversion choice from the select menu
+    let conversionType = document.getElementById("conversionChoice").value;
 
-let snowmanSize = 100;
+    // --- Temperature Calculations ---
+    // Note: The conversion must happen *after* the button is clicked to get the new value.
+    let celsius = (fahrenheit - 32) * (5 / 9);
 
-// =========================================================================
-// Setup the Drawing Canvas
-// =========================================================================
-/*  Variable that enables you to "talk to" your SVG drawing canvas. */
-let drawing = d3
-  .select("#drawing")
-  .append("svg")
-  .attr("width", drawingWidth)
-  .attr("height", drawingHeight);
+    // Step 8 (Bug Fix): The unary plus (+) ensures the celsius variable (a number) 
+    // is added to the number 273.15, avoiding "string concatenation" which was the bug.
+    let kelvin = celsius + 273.15; 
+    
+    // --- Output to Web Page (Step 10: console.log() replaced with output()) ---
 
-/* Draw a border that matches the specified drawing area's size and fill the background. */
-let border = drawing
-  .append("rect")
-  .attr("width", drawingWidth)
-  .attr("height", drawingHeight)
-  .attr("fill", "lightblue")
-  .attr("stroke", "red");
+    // Clear previous output so new results don't stack up indefinitely
+    document.getElementById("output").textContent = "";
 
-// =========================================================================
-// Draw and store snowman shapes without positioning them
-// =========================================================================
-let snowmanBody = drawing
-  .append("circle")
-  .attr("r", snowmanSize)
-  .attr("fill", "white");
+    // The Fahrenheit temperature is always shown (Step 20 requirement)
+    // Step 8 (String Fix): Clarified that this is the user's original input.
+    output(`Original Temperature (Fahrenheit): ${fahrenheit}°F`);
 
-let snowmanHead = drawing
-  .append("circle")
-  .attr("r", snowmanSize * 0.6)
-  .attr("fill", "white");
+    /* ##################################################
+       STEP 19 & 22: CONDITIONAL LOGIC (if/else version)
+       The if/else is chosen as the final logic because the two options (c or k)
+       are mutually exclusive.
+    ################################################## */
 
-let snowmanEyeLeft = drawing
-  .append("circle")
-  .attr("r", snowmanSize * 0.05)
-  .attr("fill", "black");
+    if (conversionType === "c") {
+        output(`Conversion Result (Celsius): ${celsius.toFixed(2)}°C`); // Challenge #2 (Optional) included
+    } else if (conversionType === "k") {
+        output(`Conversion Result (Kelvin): ${kelvin.toFixed(2)}K`); // Challenge #2 (Optional) included
+    }
 
-let snowmanEyeRight = drawing
-  .append("circle")
-  .attr("r", snowmanSize * 0.05)
-  .attr("fill", "black");
+    /*
+    // STEP 21: The two 'if' statements (commented out)
+    
+    if (conversionType === "c") {
+        output(`Conversion Result (Celsius): ${celsius.toFixed(2)}°C`);
+    }
+    
+    if (conversionType === "k") {
+        output(`Conversion Result (Kelvin): ${kelvin.toFixed(2)}K`);
+    }
+    */
+    
+    // Step 24: Explanation of preference
+    /*
+    I prefer the if/else structure over the two independent 'if' statements.
+    
+    Reasoning: Since the user can only select 'c' OR 'k', these two options are 
+    mutually exclusive. The if/else structure is more efficient because once the
+    program finds the first condition (conversionType === "c") is true, it skips
+    testing the second condition entirely. The two 'if' structure always tests 
+    both conditions, which is unnecessary work given the user's choice is a 
+    binary decision. The if/else structure makes the code's intent clearer for 
+    other programmers as well.
+    */
+}
 
-let snowmanMouth = drawing
-  .append("line")
-  .attr("stroke", "black")
-  .attr("stroke-width", 2); // Corrected attribute name
+// Step 4c: Add the event listener to the submit button
+document.getElementById("submit")
+    .addEventListener("click", convertTemperature);
+    // Note: The conversion logic is now inside the 'convertTemperature' function, 
+    // which is the handler for the click event.
 
-// =========================================================================
-// Move snowman pieces into place relative to the configuration variables
-// =========================================================================
-
-/* 
-This section positions all parts of the snowman.
-The body is placed using the snowmanX and snowmanY variables.
-All other parts (head, eyes, mouth) are positioned relative to the body or head.
-This ensures that if snowmanX or snowmanY is changed, the entire drawing moves together.
-*/
-
-// Position the snowman's body using the main configuration variables
-snowmanBody.attr("cx", snowmanX).attr("cy", snowmanY);
-
-// Position the head relative to the snowman's body
-snowmanHead
-  .attr("cx", snowmanBody.attr("cx"))
-  .attr("cy", Number(snowmanBody.attr("cy")) - Number(snowmanBody.attr("r")));
-
-// Position the left eye relative to the head
-snowmanEyeLeft
-  .attr(
-    "cx",
-    Number(snowmanHead.attr("cx")) - Number(snowmanEyeLeft.attr("r")) * 3
-  )
-  .attr(
-    "cy",
-    Number(snowmanHead.attr("cy")) - Number(snowmanEyeLeft.attr("r")) * 3
-  );
-
-// Position the right eye relative to the head
-// NOTE: We must wrap snowmanHead.attr("cx") in Number() because adding a number
-// to a string in JavaScript results in concatenation (e.g., "100" + 5 becomes "1005").
-snowmanEyeRight
-  .attr(
-    "cx",
-    Number(snowmanHead.attr("cx")) + Number(snowmanEyeLeft.attr("r")) * 3
-  )
-  .attr(
-    "cy",
-    Number(snowmanHead.attr("cy")) - Number(snowmanEyeLeft.attr("r")) * 3
-  );
-
-// Position the mouth relative to the head
-snowmanMouth
-  .attr(
-    "x1",
-    Number(snowmanHead.attr("cx")) - Number(snowmanHead.attr("r")) * 0.5
-  )
-  .attr(
-    "x2",
-    Number(snowmanHead.attr("cx")) + Number(snowmanHead.attr("r")) * 0.5
-  )
-  .attr(
-    "y1",
-    Number(snowmanHead.attr("cy")) + Number(snowmanHead.attr("r")) * 0.2
-  )
-  .attr(
-    "y2",
-    Number(snowmanHead.attr("cy")) + Number(snowmanHead.attr("r")) * 0.2
-  );
+// Step 4d: Closing punctuation for addEventListener (already included in the function structure)
+// }); // Not needed here as the function is defined outside and passed as a reference.
